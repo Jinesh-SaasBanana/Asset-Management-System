@@ -2,7 +2,6 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_jwt_extended import JWTManager
 from AuthService.config import Config
-from AuthService.models import User
 
 db = SQLAlchemy()
 jwt = JWTManager()
@@ -14,7 +13,7 @@ def create_app():
     db.init_app(app)
     jwt.init_app(app)
 
-    from AuthService.AuthService import auth_bp
+    from AuthService.AuthServices import auth_bp
     app.register_blueprint(auth_bp, url_prefix="/auth")
 
     return app

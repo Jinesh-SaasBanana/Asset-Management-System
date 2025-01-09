@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
+from flask_jwt_extended import create_access_token, jwt_required, get_jwt
 from AuthService.models import User
 from AuthService import db, create_app
 
@@ -35,16 +35,20 @@ def login():
     user = User.query.filter_by(username=username).first()
     if not user or not user.check_password(password):
         return jsonify({"error": "Invalid username or password"}), 401
+    identity = str(user.id)
+    additional_claims = {"username": user.username, "role": user.role}
 
-    access_token = create_access_token(identity={"id": user.id, "username": user.username, "role": user.role})
+    access_token = create_access_token(identity=identity, additional_claims=additional_claims)
     return jsonify(access_token=access_token), 200
 
 @auth_bp.route('/protected', methods=['GET'])
 @jwt_required()
 def protected():
-    current_user = get_jwt_identity()
-    return jsonify({"message": f"Hello {current_user['username']}, your role is {current_user['role']}."}), 200
+    jwt_data = get_jwt()
+    username = jwt_data["username"]
+    role = jwt_data["role"]
 
+    return jsonify({"message": f"Hello {username}, your role is {role}."}), 200
 app = create_app()
 
 if __name__ == "__main__":
