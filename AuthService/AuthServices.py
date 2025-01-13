@@ -1,9 +1,13 @@
 from flask import Blueprint, request, jsonify
-from flask_jwt_extended import create_access_token, jwt_required, get_jwt
+from flask_jwt_extended import create_access_token, jwt_required, get_jwt, get_jwt_identity, verify_jwt_in_request
 from AuthService.models import User
 from AuthService import db, create_app
 
 auth_bp = Blueprint("auth", __name__)
+
+@auth_bp.route("/",  methods=['GET'])
+def hello_world():
+    return "<p>Hello, World!</p>"
 
 # Register a new user
 @auth_bp.route('/register', methods=['POST'])
@@ -49,6 +53,17 @@ def protected():
     role = jwt_data["role"]
 
     return jsonify({"message": f"Hello {username}, your role is {role}."}), 200
+
+@auth_bp.route("/validate", methods=["POST"])
+def validate_token():
+    try:
+        verify_jwt_in_request()
+        current_user = get_jwt_identity()
+        role = get_jwt()["role"]
+        return jsonify({"message": "Token is valid", "user": int(current_user), "role": role}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 401
+
 app = create_app()
 
 if __name__ == "__main__":
