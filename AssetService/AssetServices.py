@@ -1,8 +1,6 @@
-print(__name__)
-print(__name__ == "__main__")
 from flask import jsonify, request, Blueprint, g
 from AssetService.models import Asset
-from AssetService import db, create_app
+from AssetService import db
 from AssetService.helpers import role_required, token_required
 
 assets_bp = Blueprint("assets", __name__)
@@ -112,8 +110,3 @@ def get_assets():
             "user_id": asset.user_id
         } for asset in assets
     ]), 200
-
-app = create_app()
-if __name__ == "__main__":
-    pass
-    # app.run(port=8000, debug=True)
