@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt, get_jwt_identity, verify_jwt_in_request
 from AuthService.models import User
-from AuthService import db, create_app
+from AuthService import db
 
 auth_bp = Blueprint("auth", __name__)
 
@@ -63,8 +63,3 @@ def validate_token():
         return jsonify({"message": "Token is valid", "user": int(current_user), "role": role}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 401
-
-app = create_app()
-
-if __name__ == "__main__":
-    app.run(port=5000, debug=True)

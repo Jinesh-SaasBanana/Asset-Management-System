@@ -13,9 +13,7 @@ def create_app():
     jwt.init_app(app)
     db.init_app(app)
 
-    print('__init__.py')
     from AssetService.AssetServices import assets_bp
-    print('__init__.py imported')
     app.register_blueprint(assets_bp, url_prefix="/assets")
 
     return app
